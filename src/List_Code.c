@@ -13,7 +13,7 @@ List* Create_list()
     }
     else
     {
-        //printf("\nCertin (:^D)\n");
+        //printf("nCertin (:^D)\n");
         p_list->first = NULL;
         p_list->last = NULL;
         if((p_list->first==NULL) &&(p_list->last==NULL))
@@ -29,17 +29,11 @@ List* Create_list()
         }
     }
 }
-/**/
 
-/**Até então, tá td show ness bagaça aqui tbm, joia*/
 int Its_empty(List* l)
 {
-    if(l->first==NULL)
-        return 1;
-    else
-        return 0;
+    return l->first==NULL;
 }
-/**/
 
 void Insert_first(List* l, int value)
 {
@@ -56,44 +50,15 @@ void Insert_first(List* l, int value)
     {
         l->first=p_node;
         l->last=p_node;
-        /**
-        printf("\n\tPRIMEIRO ADICIONADO\n");
-        printf("\n\tendereço da l->first: %d\n", l->first);
-        printf("\n\tendereço gurdado em l->last->before: %d\n", l->last->before);
-        printf("\n\tendereço gurdado em l->last->next: %d\n", l->last->next);
-        printf("\n\t------------------------------------------------");
-        */
     }
     else
     {
         l->first->before=p_node;
         p_node->next=l->first;
         p_node->before=NULL;
-        /**
-        printf("\n\tNOVO ADICIONADO\n");
-        printf("\n\tendereço gurdado em p_node: %d\n", p_node);
-        printf("\n\tendereço gurdado em p_node->next: %d\n", p_node->next);
-        printf("\n\tendereço gurdado em p_node->before: %d\n", p_node->before);
-        printf("\n\t------------------------------------------------");
-
-        printf("\n\tVALORES DO PRIMEIRO, SEM QUE A LISTA TENHA SIDO ATUALIZADA\n");
-        printf("\n\tendereço da l->first: %d\n", l->first);
-        printf("\n\tendereço gurdado em l->first->before: %d\n", l->first->before);
-        printf("\n\tendereço gurdado em l->first->next: %d\n", l->first->next);
-        printf("\n\t------------------------------------------------");
-        */
-
     }
 
     l->first=p_node;
-    /**
-    printf("\n\t------------------------------------------------");
-    printf("\n\tLISTA\n");
-    printf("\n\tendereço da l->first: %d\n", l->first);
-    printf("\n\tendereço gurdado em l->last: %d\n", l->last);
-    printf("\n\t------------------------------------------------");
-    printf("\n");
-    */
 }
 
 
@@ -115,44 +80,15 @@ void Insert_last(List* l, int value)
     {
         l->first=p_node;
         l->last=p_node;
-        /**
-        printf("\n\tFIRST value add\n");
-        printf("\n\tAddress l->first: %d\n", l->first);
-        printf("\n\tAddress storage in l->last->before: %d\n", l->last->before);
-        printf("\n\tAddress storage in l->last->next: %d\n", l->last->next);
-        printf("\n\t------------------------------------------------");
-        */
     }
     else
     {
         l->last->next=p_node;
         p_node->next=NULL;
         p_node->before=l->last;
-        /**
-        printf("\n\tNEWEST value\n");
-        printf("\n\tAddress storage in p_node: %d\n", p_node);
-        printf("\n\tAddress storage in p_node->next: %d\n", p_node->next);
-        printf("\n\tAddress storage in p_node->before: %d\n", p_node->before);
-        printf("\n\t------------------------------------------------");
-
-        printf("\n\tVALORES DO ÚLTIMO, SEM QUE A LISTA TENHA SIDO ATUALIZADA\n");
-        printf("\n\tAddress l->last: %d\n", l->last); // node
-        printf("\n\tAddress storage in l->last->before: %d\n", l->last->before);
-        printf("\n\tAddress storage in l->last->next: %d\n", l->last->next);
-        printf("\n\t------------------------------------------------");
-        */
 
     }
-
     l->last=p_node;
-    /**
-    printf("\n\t------------------------------------------------");
-    printf("\n\tLIST DATA\n");
-    printf("\n\tAddress l->first: %d\n", l->first);
-    printf("\n\tAddress storage in l->last: %d\n", l->last);
-    printf("\n\t------------------------------------------------");
-    printf("\n");
-    */
 }
 
 int Remove_first(List* l)
@@ -160,23 +96,27 @@ int Remove_first(List* l)
 
     if(!Its_empty(l))
     {
-        //printf("\n\tendereço da l->first: %d\n", l->first);
-        //printf("\n\tendereço da l->first->next: %d\n", l->first->next);
         int return_value = l->first->data;
+
+        if(l->first==l->last){
+            free(l->first);
+            l->first=NULL;
+            l->last=NULL;
+            return return_value;
+        }
+
         Node* aux_first = l->first;
-
         l->first=l->first->next;
-
+        l->first->before=NULL;
         free(aux_first);
         aux_first=NULL;
 
-        //printf("\n\tendereço da l->first ATUALIZADO: %d\n", l->first);
         return return_value;
     }
     else
     {
         printf("\n\tERROR: list alredy empty...\n");
-        return -1;
+        return 0;
     }
 }
 
@@ -192,15 +132,94 @@ void Destroy_list(List* l)
     {
         while(!Its_empty(l)) // enquanto a lista estiver cheia
         {
-            Remove_first(l); // remove cada nó da lista
+            int temp_result = Remove_first(l); // remove cada nó da lista
         }
         free(l);//libera a lista
     }
     /**PROBLEMA: Não libera os nós entre a lista - 15/11/25 */
-    /**
-    Posso, al invés de remover o primeiro e o último, fazer uma validação que, enquato n estiver vazia, remover o primeiro. Só depois remover a lista - 15/11/25
-    Entretanto sua complexidade será O(n).
-    */
 }
-/**/
 /**Seria bom eu verificar em todas as funções se a lista existe ou não?*/
+
+void print_first_to_last(List *l)
+{
+    Node *fir_lst = l->first;
+
+    printf("\n=======Print Screen First to Last=======\n");
+    while (fir_lst != NULL)
+    {
+        printf("|%d| ", fir_lst->data);
+        fir_lst = fir_lst->next;
+    }
+    printf("\n---------------------------------------\n");
+
+    printf("\n");
+}
+void print_last_to_first(List *l)
+{
+    Node *lst_fir = l->last;
+
+    printf("\n=======Print Screen Last to First=======\n");
+    while (lst_fir != NULL)
+    {
+        printf("|%d| ", lst_fir->data);
+        lst_fir = lst_fir->before;
+    }
+    printf("\n---------------------------------------\n");
+
+    printf("\n");
+}
+
+int Remove_itens(List* l, int value)
+{
+    if(Its_empty(l) || l->first==NULL) return 0;
+
+    Node* temp_node_actual = l->first;
+
+    while(temp_node_actual && (temp_node_actual->data!=value))
+    {
+        /*
+        printf("\t\ttemp_node_actual: %d\n", temp_node_actual);
+        printf("\t\ttemp_node_actual->data: %d\n", temp_node_actual->data);
+        printf("\t\ttemp_node_actual->next: %d\n", temp_node_actual->next);
+        printf("\t\ttemp_node_actual->before: %d\n\t++++++++++++\n\n", temp_node_actual->before);
+        */
+        temp_node_actual=temp_node_actual->next;
+    }
+
+    if (!temp_node_actual) return 0;
+
+    /*
+    printf("\tACHOU\n");
+    printf("\t\ttemp_node_actual: %d\n", temp_node_actual);
+    printf("\t\ttemp_node_actual->data: %d\n", temp_node_actual->data);
+    printf("\t\ttemp_node_actual->next: %d\n", temp_node_actual->next);
+    printf("\t\ttemp_node_actual->before: %d\n\t++++++++++++\n\n", temp_node_actual->before);
+    */
+
+    if(!temp_node_actual->before)
+    {
+        int aux_value = Remove_first(l);
+        temp_node_actual = NULL;
+    }
+    else
+    {
+        if(temp_node_actual->next) // 1 <- 2 ->NULL
+        {
+            temp_node_actual->next->before = temp_node_actual->before;
+            temp_node_actual->before->next = temp_node_actual->next;
+        }
+        else
+        {
+            l->last=l->last->before;
+            l->last->next=NULL;
+        }
+        free(temp_node_actual);
+        temp_node_actual=NULL;
+    }
+/*
+    printf("\tLista\n");
+    printf("\t\tl->fist: %d\n", l->first);
+    printf("\t\tl->last: %d\n", l->last);
+*/
+    return 1;
+}
